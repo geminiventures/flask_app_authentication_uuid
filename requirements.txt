@@ -9,3 +9,4 @@ WTForms~=3.2.1
 SQLAlchemy~=2.0.41
 alembic~=1.16.1
 python-dotenv~=1.1.0
+Flask-Limiter~=3.12
