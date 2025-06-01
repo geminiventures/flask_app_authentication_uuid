@@ -23,6 +23,9 @@ class Address(db.Model):
 
 class UserProfile(db.Model):
     user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)  # This will be set to user.id
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    date_of_birth = db.Column(db.Date, nullable=False)
     bio = db.Column(db.Text, nullable=True)
     hobbies = db.Column(db.Text, nullable=True)
 
