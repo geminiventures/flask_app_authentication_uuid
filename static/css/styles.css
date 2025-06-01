@@ -72,3 +72,8 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+form .form-group.required::after {
+      content: '*';
+      color: red;
+    }
