@@ -1,6 +1,8 @@
 from jwt import encode, decode
 from flask import Flask, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, current_user, logout_user, login_required, LoginManager
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from config import Config
 from forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm, UpdateProfileForm
@@ -9,7 +11,11 @@ from models import db, User, Address, UserProfile, SocialProfile, EducationHisto
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"]
+)
 db.init_app(app)
 
 # Create an instance of LoginManager and initialize it with the app
@@ -58,6 +64,7 @@ def register():
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute", error_message="Too many login attempts.")
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
