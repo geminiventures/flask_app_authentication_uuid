@@ -10,14 +10,19 @@
     <h1>Register</h1>
 <form method="POST" action="">
     {{ form.hidden_tag() }}
-    <div class="form-group">
+
+Required registration fields are marked with an asterisk (*).
+<!-- User Name -->
+    <div class="form-group required">
         {{ form.username.label }} {{ form.username(size=20) }}
         {% for error in form.username.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </div>
 
-    <div class="form-group">
+
+<!-- email address -->
+    <div class="form-group required">
         {{ form.email.label }} {{ form.email(size=35) }}
         {% for error in form.email.errors %}
             <span style="color: red;">[{{ error }}]</span>
@@ -25,21 +30,26 @@
     </div>
 
 
-    <div class="form-group">
-        {{ form.password.label }} {{ form.password(size=20) }}
-        {% for error in form.password.errors %}
+<!-- First Name -->
+    <div class="form-group required">
+        {{ form.first_name.label }} {{ form.first_name(size=50) }}
+        {% for error in form.first_name.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </div>
 
-    <div class="form-group">
-        {{ form.confirm_password.label }} {{ form.confirm_password(size=20) }}
-        {% for error in form.confirm_password.errors %}
+<!-- Last Name -->
+    <div class="form-group required">
+        {{ form.last_name.label }} {{ form.last_name(size=50) }}
+        {% for error in form.last_name.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </div>
 
-    <div class="form-group">
+
+
+<!--Phone Number-->
+    <div class="form-group required">
         {{ form.phone_number.label }} {{ form.phone_number(size=15) }}
         {% for error in form.phone_number.errors %}
             <span style="color: red;">[{{ error }}]</span>
@@ -47,40 +57,63 @@
     </div>
 
 
+<!-- Address Section -->
 
-    <!-- Address Section -->
+<!-- Street Address -->
     <h3>Address Information</h3>
-    <div class="form-group">
+    <div class="form-group required">
         {{ form.street_address.label }} {{ form.street_address(size=50) }}
         {% for error in form.street_address.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </div>
 
-    <div class="form-group">
+
+<!-- City -->
+    <div class="form-group required">
         {{ form.city.label }} {{ form.city(size=30) }}
         {% for error in form.city.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </div>
 
-    <div class="form-group">
+<!-- State -->
+    <div class="form-group required">
         {{ form.state.label }} {{ form.state(size=30) }}
         {% for error in form.state.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </div>
 
-    <div class="form-group">
+<!-- Zip Code -->
+    <div class="form-group required">
         {{ form.zip_code.label }} {{ form.zip_code(size=15) }}
         {% for error in form.zip_code.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </div>
 
-    <div class="form-group">
+
+<!-- Country -->
+    <div class="form-group required">
         {{ form.country.label }} {{ form.country(size=30) }}
         {% for error in form.country.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+
+<!-- Password -->
+    <div class="form-group required">
+        {{ form.password.label }} {{ form.password(size=20) }}
+        {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+
+<!-- Confirm Password -->
+    <div class="form-group required">
+        {{ form.confirm_password.label }} {{ form.confirm_password(size=20) }}
+        {% for error in form.confirm_password.errors %}
             <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </div>
@@ -92,7 +125,7 @@
         {{ form.bio.label }}<br>{{ form.bio(cols=30, rows=5) }}
     </div>
 
-    <div class="hobbbies">
+    <div class="form-group">
         {{ form.hobbies.label }}<br>{{ form.hobbies(cols=30, rows=5) }}
     </div>
 
