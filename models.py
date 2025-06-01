@@ -10,8 +10,8 @@ bcrypt = Bcrypt()
 login_manager = LoginManager()
 
 @login_manager.user_loader
-def load_user(id):
-    return User.query.get(uuid.UUID(id))
+def load_user(user_uuid):
+    return User.query.get(uuid.UUID(user_uuid))
 
 class Address(db.Model):
     user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)    # This will be set to user.id
