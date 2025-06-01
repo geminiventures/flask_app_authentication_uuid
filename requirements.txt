@@ -1,0 +1,10 @@
+Flask~=3.1.1
+Flask-SQLAlchemy
+Flask-Bcrypt~=1.0.1
+Flask-WTF
+Flask-Login~=0.6.3
+email-validator
+PyJWT~=2.10.1
+WTForms~=3.2.1
+SQLAlchemy~=2.0.41
+alembic~=1.16.1

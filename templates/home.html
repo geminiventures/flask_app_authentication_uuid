@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Welcome to our website!</h1>
+
+    {% if current_user.is_authenticated %}
+        <p>Hello, {{ current_user.username }}! You are logged in.</p>
+        <ul>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            <li><a href="{{ url_for('account') }}">Account Settings</a></li>
+            <li><a href="{{ url_for('profile') }}">Your Profile</a></li>
+        </ul>
+    {% else %}
+        <p>Please log in or register to access more features.</p>
+        <ul>
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('register') }}">Register</a></li>
+        </ul>
+    {% endif %}
+</body>
+</html>
