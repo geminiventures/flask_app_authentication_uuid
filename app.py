@@ -1,13 +1,20 @@
+# for encoding and decoding JWT tokens
 from jwt import encode, decode
 from flask import Flask, render_template, redirect, url_for, flash, request, session
+# flask login functions and wrappers
 from flask_login import login_user, current_user, logout_user, login_required, LoginManager
+# to handle rate limiting
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+# to handle date of birth
 from datetime import datetime
 
 from config import Config
 from forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm, UpdateProfileForm
-from models import db, User, Address, UserProfile, SocialProfile, EducationHistory, WorkExperience, Skill, load_user, bcrypt
+#import model functional components
+from models import db, load_user, bcrypt, soft_delete_generic
+# import models
+from models import User, Address, UserProfile, SocialProfile, EducationHistory, WorkExperience, Skill
 
 
 app = Flask(__name__)
