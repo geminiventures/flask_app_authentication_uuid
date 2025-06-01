@@ -46,6 +46,14 @@ Required registration fields are marked with an asterisk (*).
         {% endfor %}
     </div>
 
+<!-- Birth Date -->
+    <div class="form-group required">
+        {{ form.date_of_birth.label }} {{ form.date_of_birth(size=50) }}
+        {% for error in form.date_of_birth.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+
 
 
 <!--Phone Number-->

@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request, ses
 from flask_login import login_user, current_user, logout_user, login_required, LoginManager
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from datetime import datetime
 
 from config import Config
 from forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm, UpdateProfileForm
@@ -36,7 +37,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(
+        user: User = User(
             username=form.username.data,
             email=form.email.data,
             password_hash=hashed_password,
@@ -46,7 +47,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        address = Address(
+        address: Address = Address(
             user_id=user.id,
             street_address=form.street_address.data,
             city=form.city.data,
@@ -56,8 +57,14 @@ def register():
         )
         db.session.add(address)
         # Create user profile
-        profile = UserProfile(user_id=user.id, bio=form.bio.data, hobbies=form.hobbies.data)
-        db.session.add(profile)
+        user_profile: UserProfile = UserProfile(
+            user_id=user.id,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            date_of_birth=datetime.strptime(form.date_of_birth.data, '%d/%m/%Y'),
+            bio=form.bio.data,
+            hobbies=form.hobbies.data)
+        db.session.add(user_profile)
         db.session.commit()
         flash('Your account has been created! You can now log in.', 'success')
         return redirect(url_for('login'))
