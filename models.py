@@ -17,6 +17,36 @@ login_manager = LoginManager()
 def load_user(user_uuid):
     return User.query.get(uuid.UUID(user_uuid))
 
+class User(UserMixin, db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid4, nullable=False)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)
+    password_hash = db.Column(db.String(100), nullable=False)
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    # Relationships
+    address = db.relationship('Address', backref='User', uselist=False, cascade="all, delete-orphan")
+    social_profiles = db.relationship('SocialProfile', backref='user', lazy=True, cascade="all, delete-orphan")
+    education_history = db.relationship('EducationHistory', backref='user', lazy=True, cascade="all, delete-orphan")
+    work_experience = db.relationship('WorkExperience', backref='user', lazy=True, cascade="all, delete-orphan")
+    skills = db.relationship('Skill', backref='user', lazy=True, cascade="all, delete-orphan")
+    profile = db.relationship('UserProfile', backref='user', uselist=False, cascade="all, delete-orphan")
+
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
 class Address(db.Model):
     __tablename__ = 'address'
     user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)    # This will be set to user.id
@@ -61,83 +91,10 @@ class Skill(db.Model):
     user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)  # This will be set to user.id
     skill_name = db.Column(db.String(50), nullable=False)
 
-class User(UserMixin, db.Model):
-    __tablename__ = 'user'
-    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid4, nullable=False)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    phone_number = db.Column(db.String(20), nullable=False)
-    password_hash = db.Column(db.String(100), nullable=False)
 
-    @property
-    def password(self):
-        raise AttributeError('password is not a readable attribute')
-
-    @password.setter
-    def password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    # Relationships
-    address = db.relationship('Address', backref='User', uselist=False, cascade="all, delete-orphan")
-    social_profiles = db.relationship('SocialProfile', backref='user', lazy=True, cascade="all, delete-orphan")
-    education_history = db.relationship('EducationHistory', backref='user', lazy=True, cascade="all, delete-orphan")
-    work_experience = db.relationship('WorkExperience', backref='user', lazy=True, cascade="all, delete-orphan")
-    skills = db.relationship('Skill', backref='user', lazy=True, cascade="all, delete-orphan")
-    profile = db.relationship('UserProfile', backref='user', uselist=False, cascade="all, delete-orphan")
-
-    def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
 
 
 # Define deleted user tables for soft delete
-
-class DeletedAddress(db.Model):
-    __tablename__ = 'deleted_address'
-    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)    # This will be set to user.id
-    street_address = db.Column(db.String(100), nullable=False)
-    city = db.Column(db.String(50), nullable=False)
-    state = db.Column(db.String(50), nullable=False)
-    zip_code = db.Column(db.String(20), nullable=False)
-    country = db.Column(db.String(50), nullable=False)
-
-class DeletedUserProfile(db.Model):
-    __tablename__ = 'deleted_user_profile'
-    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)  # This will be set to user.id
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-    date_of_birth = db.Column(db.Date, nullable=False)
-    bio = db.Column(db.Text, nullable=True)
-    hobbies = db.Column(db.Text, nullable=True)
-
-class DeletedSocialProfile(db.Model):
-    __tablename__ = 'deleted_social_profile'
-    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)  # This will be set to user.id
-    platform = db.Column(db.String(50), nullable=False)
-    profile_url = db.Column(db.String(200), nullable=False)
-
-class DeletedEducationHistory(db.Model):
-    __tablename__ = 'deleted_education_history'
-    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)  # This will be set to user.id
-    institution_name = db.Column(db.String(100), nullable=False)
-    degree = db.Column(db.String(50), nullable=False)
-    graduation_date = db.Column(db.Date, nullable=True)
-
-class DeletedWorkExperience(db.Model):
-    __tablename__ = 'deleted_work_experience'
-    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)  # This will be set to user.id
-    company_name = db.Column(db.String(100), nullable=False)
-    position_title = db.Column(db.String(100), nullable=False)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=True)
-
-class DeletedSkill(db.Model):
-    __tablename__ = 'deleted_skill'
-    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False, primary_key=True)  # This will be set to user.id
-    skill_name = db.Column(db.String(50), nullable=False)
-
 class DeletedUser(UserMixin, db.Model):
     __tablename__ = 'deleted_user'
     id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid4, nullable=False)
@@ -153,6 +110,51 @@ class DeletedUser(UserMixin, db.Model):
     work_experience = db.relationship('DeletedWorkExperience', backref='DeletedUser', lazy=True, cascade="all, delete-orphan")
     skills = db.relationship('DeletedSkill', backref='DeletedUser', lazy=True, cascade="all, delete-orphan")
     profile = db.relationship('DeletedUserProfile', backref='DeletedUser', uselist=False, cascade="all, delete-orphan")
+
+class DeletedAddress(db.Model):
+    __tablename__ = 'deleted_address'
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('deleted_user.id'), nullable=False, primary_key=True)    # This will be set to deleted_user.id
+    street_address = db.Column(db.String(100), nullable=False)
+    city = db.Column(db.String(50), nullable=False)
+    state = db.Column(db.String(50), nullable=False)
+    zip_code = db.Column(db.String(20), nullable=False)
+    country = db.Column(db.String(50), nullable=False)
+
+class DeletedUserProfile(db.Model):
+    __tablename__ = 'deleted_user_profile'
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('deleted_user.id'), nullable=False, primary_key=True)  # This will be set to deleted_user.id
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    date_of_birth = db.Column(db.Date, nullable=False)
+    bio = db.Column(db.Text, nullable=True)
+    hobbies = db.Column(db.Text, nullable=True)
+
+class DeletedSocialProfile(db.Model):
+    __tablename__ = 'deleted_social_profile'
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('deleted_user.id'), nullable=False, primary_key=True)  # This will be set to deleted_user.id
+    platform = db.Column(db.String(50), nullable=False)
+    profile_url = db.Column(db.String(200), nullable=False)
+
+class DeletedEducationHistory(db.Model):
+    __tablename__ = 'deleted_education_history'
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('deleted_user.id'), nullable=False, primary_key=True)  # This will be set to deleted_user.id
+    institution_name = db.Column(db.String(100), nullable=False)
+    degree = db.Column(db.String(50), nullable=False)
+    graduation_date = db.Column(db.Date, nullable=True)
+
+class DeletedWorkExperience(db.Model):
+    __tablename__ = 'deleted_work_experience'
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('deleted_user.id'), nullable=False, primary_key=True)  # This will be set to deleted_user.id
+    company_name = db.Column(db.String(100), nullable=False)
+    position_title = db.Column(db.String(100), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=True)
+
+class DeletedSkill(db.Model):
+    __tablename__ = 'deleted_skill'
+    user_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey('deleted_user.id'), nullable=False, primary_key=True)  # This will be set to deleted_user.id
+    skill_name = db.Column(db.String(50), nullable=False)
+
 
 
 def soft_delete_generic(user_model, user_id, deleted_model_map):
