@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Request</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Request Password Reset</h1>
+    <form method="POST" action="{{ url_for('reset_request') }}">
+        {{ form.hidden_tag() }}
+        <div>{{ form.email.label }} {{ form.email(size=32) }}</div>
+        <div>{{ form.submit() }}</div>
+    </form>
+</body>
+</html>
